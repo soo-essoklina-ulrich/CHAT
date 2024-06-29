@@ -1,13 +1,21 @@
+import os
+from dotenv import load_dotenv
+
 from openai import OpenAI
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
+# Charger les variables d'environnement à partir du fichier .env
+load_dotenv()
+
 app = Flask(__name__)
 cors = CORS()
 client = OpenAI(
-    api_key="372bc681bc094005af573f9cf35fb076",
-    base_url="https://api.aimlapi.com"
+    api_key=os.getenv("OPENAI_API_KEY"),
+    base_url=os.getenv("OPENAI_BASE_URL")
+
 )
+
 cors.init_app(
     app,
     resources={r"*": {"origins": "*"}}
@@ -16,7 +24,7 @@ cors.init_app(
 
 def generate_response(prompt):
     response = client.chat.completions.create(
-        model="mistralai/Mistral-7B-Instruct-v0.1",
+        model=os.getenv("OPENAI_MODEL"),
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": prompt},
